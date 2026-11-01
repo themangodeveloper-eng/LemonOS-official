@@ -1,0 +1,82 @@
+#!/usr/bin/env bash
+# lemonOS - Copyright (C) 2026 TheMangoDeveloper. Licensed under GPL-3.0-or-later; see LICENSE.
+# lemon - lemonOS package manager (wraps apt/dpkg, adds repos, .deb, mods)
+set -uo pipefail
+VERSION="0.1.0"
+CONF=/etc/lemonos
+MODS=/usr/local/share/lemonos/mods
+export DEBIAN_FRONTEND=noninteractive
+
+die(){ echo "lemon: $*" >&2; exit 1; }
+need_root(){ [ "$(id -u)" -eq 0 ] || die "run as root (lemonOS logs in as root by default)"; }
+apt_(){ apt-get -o Dpkg::Progress-Fancy=1 "$@"; }
+
+usage(){ cat <<'U'
+🍋 lemon - lemonOS package manager
+
+  lemon install <pkg...>      install packages (apt or your repos)
+  lemon remove  <pkg...>      remove packages
+  lemon search  <term>        search packages
+  lemon info    <pkg>         show package details
+  lemon list                  list installed packages
+  lemon update                refresh package lists
+  lemon upgrade               upgrade everything
+  lemon deb <file.deb...>     install local .deb files (deps resolved)
+  lemon repo add <name> "<url suite components>" <key-url>
+  lemon repo list | remove <name>
+  lemon mod [name]            list / run mods (desktop, devtools)
+  lemon clean                 clear caches
+  lemon ai ["question"]       built-in AI assistant
+  lemon boost [--undo]        speed optimizer
+  lemon version
+U
+}
+
+cmd="${1:-help}"; shift || true
+case "$cmd" in
+  install)  need_root; [ $# -gt 0 ] || die "name a package"; apt_ install -y "$@" ;;
+  remove)   need_root; [ $# -gt 0 ] || die "name a package"; apt_ remove -y "$@" ;;
+  search)   [ $# -gt 0 ] || die "search for what?"; apt-cache search "$@" ;;
+  info)     [ $# -gt 0 ] || die "which package?"; apt-cache show "$1" ;;
+  list)     dpkg-query -W -f='${Package} ${Version}\n' ;;
+  update)   need_root; apt_ update ;;
+  upgrade)  need_root; apt_ update && apt_ upgrade -y ;;
+  clean)    need_root; apt_ clean; apt_ autoremove -y; echo "cache cleared" ;;
+  deb)
+    need_root; [ $# -gt 0 ] || die "give a .deb file"
+    files=()
+    for f in "$@"; do
+      [ -f "$f" ] || die "not found: $f"
+      case "$f" in /*) files+=("$f");; *) files+=("./$f");; esac
+    done
+    apt_ install -y "${files[@]}" ;;
+  repo)
+    need_root; sub="${1:-list}"; shift || true
+    mkdir -p /etc/apt/keyrings /etc/apt/sources.list.d
+    case "$sub" in
+      add)
+        name="${1:-}"; line="${2:-}"; key="${3:-}"
+        [ -n "$name" ] && [ -n "$line" ] || die 'usage: lemon repo add <name> "<url suite components>" <key-url>'
+        if [ -n "$key" ]; then
+          curl -fsSL "$key" | gpg --dearmor -o "/etc/apt/keyrings/lemon-$name.gpg" || die "could not fetch key"
+          opts="[signed-by=/etc/apt/keyrings/lemon-$name.gpg]"
+        elif [ "${LEMON_INSECURE:-0}" = "1" ]; then
+          echo "⚠ adding UNSIGNED repo"; opts="[trusted=yes]"
+        else
+          die "repo needs a signing key URL (or set LEMON_INSECURE=1 to skip, not recommended)"
+        fi
+        echo "deb $opts $line" > "/etc/apt/sources.list.d/lemon-$name.list"
+        apt_ update; echo "repo '$name' added" ;;
+      list)   ls /etc/apt/sources.list.d/ 2>/dev/null | sed -n 's/^lemon-\(.*\)\.list$/\1/p' ;;
+      remove) [ -n "${1:-}" ] || die "which repo?"
+              rm -f "/etc/apt/sources.list.d/lemon-$1.list" "/etc/apt/keyrings/lemon-$1.gpg"; echo "removed $1" ;;
+      *) die "repo add | list | remove" ;;
+    esac ;;
+  mod)
+    if [ -z "${1:-}" ]; then ls "$MODS" | sed 's/\.sh$//'; else
+      [ -x "$MODS/$1.sh" ] || die "no such mod: $1"; need_root; "$MODS/$1.sh"; fi ;;
+  ai)     exec lemon-ai "$@" ;;
+  boost)  exec lemon-boost "$@" ;;
+  version|-v|--version) echo "$VERSION" ;;
+  help|-h|--help|*) usage ;;
+esac

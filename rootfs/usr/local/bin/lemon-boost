@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+# lemonOS - Copyright (C) 2026 TheMangoDeveloper. Licensed under GPL-3.0-or-later; see LICENSE.
+# lemon-boost - safe, rootless speed tweaks for lemonOS
+CONF=/etc/apt/apt.conf.d/99lemon-fast
+if [ "${1:-}" = "--undo" ]; then rm -f "$CONF"; echo "boost settings removed"; exit 0; fi
+[ "$(id -u)" -eq 0 ] || { echo "run as root"; exit 1; }
+
+before=$(du -sm /var/cache/apt /var/lib/apt/lists 2>/dev/null | awk '{s+=$1} END{print s+0}')
+
+cat > "$CONF" <<'C'
+Acquire::Queue-Mode "access";
+Acquire::http::Pipeline-Depth "10";
+Acquire::Languages "none";
+Acquire::CompressionTypes::Order:: "gz";
+APT::Install-Recommends "false";
+Dpkg::Options:: "--force-unsafe-io";
+C
+
+apt-get clean
+apt-get autoremove -y >/dev/null 2>&1
+rm -rf /tmp/* /var/tmp/* /var/log/*.log 2>/dev/null
+find /var/lib/apt/lists -type f -name '*Translation*' -delete 2>/dev/null
+
+after=$(du -sm /var/cache/apt /var/lib/apt/lists 2>/dev/null | awk '{s+=$1} END{print s+0}')
+echo "🍋 boost applied: parallel downloads, no translations, no recommends, fast dpkg I/O"
+echo "   cache before: ${before} MB  after: ${after} MB"
+echo "   undo with: lemon boost --undo"

@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+# lemonOS - Copyright (C) 2026 TheMangoDeveloper. Licensed under GPL-3.0-or-later; see LICENSE.
+# lemon-ai - lemonOS built-in assistant (Anthropic API). Asks before running any command.
+CONF=/etc/lemonos/ai.conf
+[ -f "$CONF" ] && . "$CONF"
+MODEL="${LEMON_AI_MODEL:-claude-sonnet-5-5}"
+KEY="${ANTHROPIC_API_KEY:-}"
+SYSTEM="You are the lemonOS assistant inside a Debian proot environment in Termux (no systemd, no kernel access, usually root). Be brief. When a shell command helps, give exactly one command in a \`\`\`bash block. Prefer the 'lemon' package manager."
+HIST=$(mktemp); echo '[]' > "$HIST"; trap 'rm -f "$HIST"' EXIT
+
+command -v jq >/dev/null || { echo "install jq: lemon install jq"; exit 1; }
+
+ask(){ # $1 = user text
+  jq --arg t "$1" '. + [{role:"user",content:$t}]' "$HIST" > "$HIST.n" && mv "$HIST.n" "$HIST"
+  body=$(jq -n --arg m "$MODEL" --arg s "$SYSTEM" --slurpfile h "$HIST" \
+    '{model:$m,max_tokens:1000,system:$s,messages:$h[0]}')
+  if [ "${LEMON_DRY:-0}" = "1" ]; then echo "$body"; return; fi
+  [ -n "$KEY" ] || { echo "No API key. Run: echo 'ANTHROPIC_API_KEY=sk-ant-...' > $CONF"; exit 1; }
+  resp=$(curl -sS https://api.anthropic.com/v1/messages \
+    -H "x-api-key: $KEY" -H "anthropic-version: 2023-06-01" -H "content-type: application/json" -d "$body")
+  text=$(echo "$resp" | jq -r '.content[0].text // empty')
+  [ -n "$text" ] || { echo "API error: $(echo "$resp" | jq -r '.error.message // .')"; return; }
+  jq --arg t "$text" '. + [{role:"assistant",content:$t}]' "$HIST" > "$HIST.n" && mv "$HIST.n" "$HIST"
+  echo "$text"
+  cmd=$(echo "$text" | sed -n '/^```bash/,/^```/p' | sed '1d;$d')
+  if [ -n "$cmd" ]; then
+    echo; echo "▶ $cmd"; read -rp "Run it? [y/N] " ok
+    [ "$ok" = "y" ] && bash -c "$cmd"
+  fi
+}
+
+if [ $# -gt 0 ]; then ask "$*"; exit; fi
+echo "🍋 lemon ai - type 'exit' to quit"
+while read -rp "you> " line; do
+  [ "$line" = "exit" ] && break
+  [ -n "$line" ] && ask "$line"
+done
