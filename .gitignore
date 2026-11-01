@@ -1,5 +1,4 @@
 # Prerequisites
-*.d
 
 # Compiled Object files
 *.slo
@@ -66,3 +65,7 @@ vcpkg_installed/
 # test output & cache
 Testing/
 .cache/
+
+# keep lemonOS rootfs files
+!rootfs/etc/profile.d/
+!rootfs/etc/profile.d/*.sh
