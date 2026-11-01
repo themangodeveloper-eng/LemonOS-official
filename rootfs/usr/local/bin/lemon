@@ -66,7 +66,11 @@ case "$cmd" in
           die "repo needs a signing key URL (or set LEMON_INSECURE=1 to skip, not recommended)"
         fi
         echo "deb $opts $line" > "/etc/apt/sources.list.d/lemon-$name.list"
-        apt_ update; echo "repo '$name' added" ;;
+        if apt_ update; then echo "repo '$name' added"
+        else
+          rm -f "/etc/apt/sources.list.d/lemon-$name.list" "/etc/apt/keyrings/lemon-$name.gpg"
+          die "repo '$name' failed to update, so it was removed"
+        fi ;;
       list)   ls /etc/apt/sources.list.d/ 2>/dev/null | sed -n 's/^lemon-\(.*\)\.list$/\1/p' ;;
       remove) [ -n "${1:-}" ] || die "which repo?"
               rm -f "/etc/apt/sources.list.d/lemon-$1.list" "/etc/apt/keyrings/lemon-$1.gpg"; echo "removed $1" ;;
