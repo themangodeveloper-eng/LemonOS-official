@@ -2,7 +2,7 @@
 # lemonOS - Copyright (C) 2026 TheMangoDeveloper. Licensed under GPL-3.0-or-later; see LICENSE.
 # lemon - lemonOS package manager (wraps apt/dpkg, adds repos, .deb, mods)
 set -uo pipefail
-VERSION="0.2.0"
+VERSION="0.2.0-beta"
 CONF=/etc/lemonos
 MODS=/usr/local/share/lemonos/mods
 export DEBIAN_FRONTEND=noninteractive

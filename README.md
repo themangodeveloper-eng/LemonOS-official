@@ -3,6 +3,7 @@
 </p>
 
 <p align="center">
+  <img alt="Status" src="https://img.shields.io/badge/status-beta-ff9800?style=for-the-badge">
   <img alt="License" src="https://img.shields.io/badge/license-GPL--3.0-fbc02d?style=for-the-badge">
   <img alt="Base" src="https://img.shields.io/badge/base-Debian-a80030?style=for-the-badge&logo=debian&logoColor=white">
   <img alt="Platform" src="https://img.shields.io/badge/platform-Termux-1b1f2a?style=for-the-badge">
@@ -10,6 +11,8 @@
 </p>
 
 **lemonOS** is a Debian environment for Termux (via `proot-distro`) with its own package manager, a built-in AI assistant, and a speed optimizer.
+
+> ⚠️ **Beta (0.2.0-beta).** lemonOS works, but it is new: expect rough edges, and please report bugs in the issues tab.
 
 > lemonOS runs on the Android kernel inside proot. It is a full Debian userland with a custom layer on top, not a standalone OS.
 

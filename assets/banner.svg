@@ -26,6 +26,10 @@
     <path d="M-30 -20 C -14 -34, 4 -38, 22 -34" stroke="#fffde7" stroke-width="7" stroke-linecap="round" fill="none" opacity="0.55"/>
   </g>
 
+  <!-- beta tag -->
+  <rect x="254" y="68" width="78" height="30" rx="15" fill="#ff9800"/>
+  <text x="293" y="89" text-anchor="middle" font-family="'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="17" font-weight="700" fill="#1b1f2a" letter-spacing="2">BETA</text>
+
   <!-- title -->
   <text x="250" y="178" font-family="'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="92" font-weight="800" fill="url(#txt)" letter-spacing="-2">lemonOS</text>
   <text x="254" y="222" font-family="'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="24" fill="#cfd8dc">Debian-based environment for Termux</text>
