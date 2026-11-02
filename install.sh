@@ -9,15 +9,19 @@ echo "🍋 Installing lemonOS..."
 pkg update -y
 pkg install -y proot-distro curl git
 
-ROOTFS="$PREFIX/var/lib/proot-distro/installed-rootfs/$NAME"
-if [ -d "$ROOTFS" ]; then
+# Ask proot-distro itself whether the container exists (works across versions)
+if proot-distro login "$NAME" -- true >/dev/null 2>&1; then
   echo "lemonOS already installed, updating its files."
 else
   # newer proot-distro uses --name, older versions use --override-alias
   if proot-distro install --help 2>&1 | grep -q -- '--name'; then
-    proot-distro install debian --name "$NAME"
+    out=$(proot-distro install debian --name "$NAME" 2>&1) || rc=$?
   else
-    proot-distro install debian --override-alias "$NAME"
+    out=$(proot-distro install debian --override-alias "$NAME" 2>&1) || rc=$?
+  fi
+  echo "$out"
+  if [ "${rc:-0}" -ne 0 ] && ! echo "$out" | grep -qi "already exists"; then
+    echo "Install failed, see the message above."; exit 1
   fi
 fi
 
