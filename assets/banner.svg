@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 360" width="1200" height="360" role="img" aria-label="lemonOS - Debian-based environment for Termux">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0f1115"/>
+      <stop offset="1" stop-color="#1b1f2a"/>
+    </linearGradient>
+    <linearGradient id="lem" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fff176"/>
+      <stop offset="1" stop-color="#fbc02d"/>
+    </linearGradient>
+    <linearGradient id="txt" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#fff59d"/>
+      <stop offset="1" stop-color="#ffca28"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="360" rx="28" fill="url(#bg)"/>
+  <circle cx="1060" cy="60" r="180" fill="#fbc02d" opacity="0.06"/>
+  <circle cx="120" cy="330" r="140" fill="#66bb6a" opacity="0.06"/>
+
+  <!-- lemon -->
+  <g transform="translate(138 176) scale(0.95)">
+    <ellipse cx="0" cy="0" rx="86" ry="68" fill="url(#lem)" transform="rotate(-18)"/>
+    <ellipse cx="-86" cy="-26" rx="14" ry="9" fill="#fbc02d" transform="rotate(-18 -86 -26)"/>
+    <ellipse cx="86" cy="26" rx="14" ry="9" fill="#f9a825" transform="rotate(-18 86 26)"/>
+    <path d="M-6 -66 C 6 -96, 34 -104, 54 -92 C 40 -72, 20 -64, -6 -66 Z" fill="#66bb6a"/>
+    <path d="M-30 -20 C -14 -34, 4 -38, 22 -34" stroke="#fffde7" stroke-width="7" stroke-linecap="round" fill="none" opacity="0.55"/>
+  </g>
+
+  <!-- title -->
+  <text x="250" y="178" font-family="'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="92" font-weight="800" fill="url(#txt)" letter-spacing="-2">lemonOS</text>
+  <text x="254" y="222" font-family="'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="24" fill="#cfd8dc">Debian-based environment for Termux</text>
+
+  <!-- terminal pill -->
+  <rect x="254" y="248" width="470" height="48" rx="12" fill="#0b0d11" stroke="#2c3340"/>
+  <circle cx="276" cy="272" r="6" fill="#ef5350"/><circle cx="296" cy="272" r="6" fill="#ffca28"/><circle cx="316" cy="272" r="6" fill="#66bb6a"/>
+  <text x="340" y="279" font-family="'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace" font-size="21" fill="#fbc02d">lemon<tspan fill="#9aa5b1">:~# </tspan><tspan fill="#e0e6ed">lemon ai</tspan></text>
+
+  <!-- feature chips -->
+  <g font-family="'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="20" fill="#e0e6ed">
+    <rect x="780" y="120" width="170" height="40" rx="20" fill="#232937"/><text x="865" y="147" text-anchor="middle">AI assistant</text>
+    <rect x="962" y="120" width="170" height="40" rx="20" fill="#232937"/><text x="1047" y="147" text-anchor="middle">apt + .deb</text>
+    <rect x="780" y="172" width="170" height="40" rx="20" fill="#232937"/><text x="865" y="199" text-anchor="middle">Optimizer</text>
+    <rect x="962" y="172" width="170" height="40" rx="20" fill="#232937"/><text x="1047" y="199" text-anchor="middle">Signed repos</text>
+  </g>
+
+  <!-- Made in India -->
+  <g transform="translate(780 250)">
+    <rect width="352" height="46" rx="23" fill="#0b0d11" stroke="#2c3340"/>
+    <clipPath id="flag"><rect x="14" y="11" width="36" height="24" rx="4"/></clipPath>
+    <g clip-path="url(#flag)">
+      <rect x="14" y="11" width="36" height="8" fill="#FF9933"/>
+      <rect x="14" y="19" width="36" height="8" fill="#FFFFFF"/>
+      <rect x="14" y="27" width="36" height="8" fill="#138808"/>
+    </g>
+    <circle cx="32" cy="23" r="3.4" fill="none" stroke="#000080" stroke-width="1"/>
+    <text x="64" y="30" font-family="'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="21" fill="#e0e6ed">Made in India</text>
+    <text x="338" y="30" text-anchor="end" font-family="'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="17" fill="#9aa5b1">GPL-3.0</text>
+  </g>
+</svg>

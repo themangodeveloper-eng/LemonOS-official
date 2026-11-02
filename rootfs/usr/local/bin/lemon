@@ -2,7 +2,7 @@
 # lemonOS - Copyright (C) 2026 TheMangoDeveloper. Licensed under GPL-3.0-or-later; see LICENSE.
 # lemon - lemonOS package manager (wraps apt/dpkg, adds repos, .deb, mods)
 set -uo pipefail
-VERSION="0.1.0"
+VERSION="0.2.0"
 CONF=/etc/lemonos
 MODS=/usr/local/share/lemonos/mods
 export DEBIAN_FRONTEND=noninteractive
@@ -28,6 +28,7 @@ usage(){ cat <<'U'
   lemon clean                 clear caches
   lemon ai ["question"]       built-in AI assistant
   lemon boost [--undo]        speed optimizer
+  lemon brand [--undo]        show the system as lemonOS (os-release, neofetch)
   lemon version
 U
 }
@@ -81,6 +82,7 @@ case "$cmd" in
       [ -x "$MODS/$1.sh" ] || die "no such mod: $1"; need_root; "$MODS/$1.sh"; fi ;;
   ai)     exec lemon-ai "$@" ;;
   boost)  exec lemon-boost "$@" ;;
+  brand)  need_root; exec /usr/local/share/lemonos/brand.sh "$@" ;;
   version|-v|--version) echo "$VERSION" ;;
   help|-h|--help|*) usage ;;
 esac

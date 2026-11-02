@@ -20,10 +20,12 @@ proot-distro login "$NAME" --bind "$DIR/rootfs:/mnt/lemon" -- bash -c '
   export DEBIAN_FRONTEND=noninteractive
   apt-get update
   apt-get install -y --no-install-recommends ca-certificates curl gnupg jq nano htop less
+  mkdir -p /etc/lemonos
   cp -r /mnt/lemon/* /
   chmod +x /usr/local/bin/lemon /usr/local/bin/lemon-ai /usr/local/bin/lemon-boost
-  chmod +x /usr/local/share/lemonos/mods/*.sh
+  chmod +x /usr/local/share/lemonos/mods/*.sh /usr/local/share/lemonos/brand.sh
   lemon boost
+  lemon brand
 '
 
 mkdir -p "$PREFIX/bin"
